@@ -1,13 +1,16 @@
-from parsers.base_parser import BaseParser
-from recruitment_post import RecruitmentPost
+from src.fetchers.base import BaseFetcher
+from src.recruitment_post import RecruitmentPost
 from datetime import datetime
 import parsedatetime as pdt
 import hashlib
 
-class DiscordPasteParser(BaseParser):
+class DiscordPasteFetcher(BaseFetcher):
 
-    NAME = "discord-paste"
     SPLIT_STRING = " — "
+    INPUT_FILE = "discord-paste.txt"
+
+    def name():
+        return "discord-paste"
 
     def _reset(self):
         self.last_line : str = ""
@@ -17,20 +20,25 @@ class DiscordPasteParser(BaseParser):
 
     def _make_post(self) -> RecruitmentPost:
         post = RecruitmentPost()
-        h = hashlib.new("sha256")
-        h.update(self.current_post_id.encode())
-        post.uid = h.hexdigest()
+        post.uid = BaseFetcher._hash_string(self.current_post_id)
         post.original_message = "\n".join(self.current_message.splitlines()[0:-1])
         post.date = self.current_message_date
-        post.source = self.source
+        post.source = DiscordPasteFetcher.name()
+        post.contact = "Via '%s' as '%s'" % (self.source.get("name", "n/a"), self.current_post_id)
         self.current_post_id = ""
         self.current_message = ""
         self.current_message_date = None
         return post
 
-    def parse(self, source : str, data : str) -> list[RecruitmentPost]:
+    def _fetch_input(self) -> str:
+        with open(DiscordPasteFetcher.INPUT_FILE, "r", encoding="utf-8") as f:
+            return f.read()
 
-        self.source : str = source
+    def fetch(self) -> list[RecruitmentPost]:
+
+        data = self._fetch_input()
+
+
         self._reset()
         out = []
 
@@ -40,7 +48,7 @@ class DiscordPasteParser(BaseParser):
         for line in data.splitlines():
             # when split string is found then the previous message was the username
             # the remaining lines are the message
-            if DiscordPasteParser.SPLIT_STRING in line:
+            if DiscordPasteFetcher.SPLIT_STRING in line:
                 if self.current_post_id and self.current_message: out.append(self._make_post())
                 self.current_post_id = self.last_line.strip()
                 self.current_message = ""

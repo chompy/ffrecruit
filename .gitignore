@@ -1,4 +1,4 @@
 __pycache__
 config.yaml
 *.db
-data/vector
+data/

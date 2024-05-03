@@ -8,20 +8,19 @@ class Config:
         self.sources : list[dict] = []
         self.prompts : dict[str] = {}
         self.openai : dict = {}
-        self.ollama : dict = {}
+        self.huggingface : dict = {}
         self.reddit : dict = {}
-        self.default_provider : str = "openai"
+        self._load()
 
-    def load_from_yaml(self):
-        path_to = os.path.join(os.path.dirname(__file__), "config.yaml")
+    def _load(self):
+        path_to = os.path.join("conf/config.yaml")
         with open(path_to, "r") as f:
             data = yaml.safe_load(f)
             self.sources = data.get("sources", [])
             self.prompts = data.get("prompts", {})
             self.openai = data.get("openai", {})
-            self.ollama = data.get("ollama", {})
+            self.huggingface = data.get("huggingface", {})
             self.reddit = data.get("reddit", {})
-            self.default_provider = data.get("default_provider", "openai")
         return self
 
     def get_source_by_key(self, key : str) -> Optional[dict]:

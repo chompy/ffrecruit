@@ -1,5 +1,5 @@
-from recruitment_post import RecruitmentPost
-from config import Config
+from src.recruitment_post import RecruitmentPost
+from src.config import Config
 import hashlib
 
 class BaseFetcher:

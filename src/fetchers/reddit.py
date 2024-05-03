@@ -1,5 +1,5 @@
-from fetchers.base import BaseFetcher
-from recruitment_post import RecruitmentPost
+from src.fetchers.base import BaseFetcher
+from src.recruitment_post import RecruitmentPost
 import praw
 import datetime
 
@@ -19,7 +19,7 @@ class RedditFetcher(BaseFetcher):
         subr = reddit.subreddit(self.source.get("external_id", ""))
 
         out = []
-        for reddit_post in subr.new(limit=5):
+        for reddit_post in subr.new(limit=300):
             post = RecruitmentPost()
             post.source = RedditFetcher.name()
             post.uid = BaseFetcher._hash_string(reddit_post.id)
