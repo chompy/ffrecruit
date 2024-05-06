@@ -23,8 +23,10 @@ class DiscordPasteFetcher(BaseFetcher):
         post.uid = BaseFetcher._hash_string(self.current_post_id)
         post.original_message = "\n".join(self.current_message.splitlines()[0:-1])
         post.date = self.current_message_date
-        post.source = DiscordPasteFetcher.name()
+        post.fetcher = DiscordPasteFetcher.name()
+        post.source = self.source.get("name", "n/a")
         post.contact = "Via '%s' as '%s'" % (self.source.get("name", "n/a"), self.current_post_id)
+        post.url = self.source.get("url", "")
         self.current_post_id = ""
         self.current_message = ""
         self.current_message_date = None

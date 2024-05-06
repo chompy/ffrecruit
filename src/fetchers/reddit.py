@@ -21,7 +21,8 @@ class RedditFetcher(BaseFetcher):
         out = []
         for reddit_post in subr.new(limit=300):
             post = RecruitmentPost()
-            post.source = RedditFetcher.name()
+            post.fetcher = RedditFetcher.name()
+            post.source = self.source.get("name", "n/a")
             post.uid = BaseFetcher._hash_string(reddit_post.id)
             post.original_id = reddit_post.id
             post.original_message = reddit_post.title + "\n\n" + reddit_post.selftext

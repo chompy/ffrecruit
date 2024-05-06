@@ -9,7 +9,7 @@ from src.fetchers.discord_paste import DiscordPasteFetcher
 config = Config()
 
 AVAILABLE_FETCHERS = [RedditFetcher, DiscordPasteFetcher]
-STORE_PATH = "data/bot_input_queue"
+STORE_PATH = "data/input"
 
 parser = argparse.ArgumentParser(description='Fetch recruitment post from given source.')
 parser.add_argument("source", type=str)

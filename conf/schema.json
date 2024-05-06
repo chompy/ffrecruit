@@ -6,38 +6,28 @@
             "enum": ["Looking For Group", "Looking For Members", "Free Company", "Other"]
         },
         "schedule": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
         },
         "summary": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
         },
         "tags": {
             "type": "array",
             "items": {
                 "type": "string",
                 "enum": ["Static","LFG","LFM","FC","C","MC","SHC","HC","WP","W1","Blind","Speed","Farm","Parse","Savage","Ultimate","Extreme","NA","JP","EU","OC","7.0"]
-            },
-            "minItems": 1,
-            "maxItems": 10
+            }
         },
         "roles": {
             "type": "array",
             "items": {
                 "type": "string",
-                "enum": ["Healer", "Regen Healer", "Shield Healer", "Tank", "DPS", "Melee", "Physical Ranged", "Caster", "PLD","WAR","DRK","GNB","WHM","SCH","AST","SGE","MNK","DRG","NIN","SAM","RPR","VIP","BRD","MCH","DNC","BLM","SMN","RDM","PIC","BLU"]
-            },
-            "minItems": 1,
-            "maxItems": 10
+                "enum": ["Healer", "Regen Healer", "Pure Healer", "Shield Healer", "Tank", "DPS", "Melee", "Physical Ranged", "Phys Ranged", "Ranged", "Magical Ranged", "Caster", "PLD","WAR","DRK","GNB","WHM","SCH","AST","SGE","MNK","DRG","NIN","SAM","RPR","VIP","BRD","MCH","DNC","BLM","SMN","RDM","PIC","BLU"]
+            }
         },
         "contact": {
-            "type": "string",
-            "minLength": 1
-        },
-        "open_slots": {
-            "type": "integer"
+            "type": "string"
         }
     },
-    "required": ["intent", "summary", "schedule", "contact", "roles", "tags"]
+    "required": ["intent", "summary", "tags"]
 }

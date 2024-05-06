@@ -2,17 +2,14 @@ import time
 import os
 import datetime
 import json
-from llama_cpp import Llama, LlamaGrammar
+from llama_cpp import Llama
 from src.config import Config
 from src.recruitment_post import RecruitmentPost
 
-INPUT_PATH = "data/bot_input_queue"
+INPUT_PATH = "data/input"
 OUTPUT_PATH = "data/output"
 
 config = Config()
-
-print("> Load grammar file.")
-grammar = LlamaGrammar.from_file("conf/grammar.gbnf")
 
 print("> Init Llama.cpp.")
 llm = Llama.from_pretrained(
@@ -33,6 +30,20 @@ llm = Llama.from_pretrained(
     access_token=config.huggingface.get("access_token")
 )
 
+print("> Load schema.")
+schema = {}
+with open("conf/schema.json", "r", encoding="utf-8") as f:
+    schema = json.load(f)
+tools = [
+    {
+        "type" : "function",
+        "function" : {
+            "name" : "extract_data",
+            "description" : "Extract data from a recruitment posting",
+            "parameters": schema
+        }
+    }
+]
 
 print("> Start processing.")
 for file in os.scandir(INPUT_PATH):
@@ -59,33 +70,28 @@ for file in os.scandir(INPUT_PATH):
     start_time = datetime.datetime.now()
     res = llm.create_chat_completion(
         messages=messages,
-        grammar=grammar,
         temperature=0,
-        max_tokens=4096
+        max_tokens=4096,
+        tools=tools,
+        tool_choice={
+            "type": "function", "function": {"name": "extract_data"}
+        }
     )
     end_time = datetime.datetime.now()
     duration = end_time - start_time
 
-    resp_dict = {}
-    try:
-        resp_dict = json.loads(res.get("choices", [{}])[0].get("message", {}).get("content", ""))
-    except json.decoder.JSONDecodeError:
-        print(res.get("choices", [{}])[0].get("message", {}).get("content", ""))
-        print("\tERROR: json decode error, skipped")
-        continue
-    
-
     print("\tDONE: %d seconds" % (duration.seconds))
 
-    post.intent = resp_dict.get("intent", "")
-    post.schedule = resp_dict.get("schedule", "")
-    post.summary = resp_dict.get("summary", "")
-    post.tags = resp_dict.get("tags", [])
-    post.roles = resp_dict.get("roles", [])
-    resp_contact = resp_dict.get("contact", "")
+    post_data = json.loads(res.get("choices", [{}])[0].get("message", {}).get("function_call", {}).get("arguments", {}))
+    
+    post.intent = post_data.get("intent", "")
+    post.schedule = post_data.get("schedule", "")
+    post.summary = post_data.get("summary", "")
+    post.tags = post_data.get("tags", [])
+    post.roles = post_data.get("roles", [])
+    resp_contact = post_data.get("contact", "")
     if resp_contact and not post.contact: post.contact = resp_contact
-    post.fflogs = resp_dict.get("fflogs", [])
-    post.open_slots = resp_dict.get("open_slots", 0)\
+    post.clean_up()
 
     with open(path_to, "w", encoding="utf-8") as f:
         json.dump(post.to_dict(), f)

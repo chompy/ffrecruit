@@ -1,12 +1,15 @@
 from typing import Optional
 from datetime import datetime
 import re
+from src.roles import role_list_to_job_list
+from src.intents import intent_to_abbr
 
 class RecruitmentPost:
 
     def __init__(self):
         self.uid : str = ""
         self.date : Optional[datetime.date] = None
+        self.fetcher : str = ""
         self.source : str = ""
         self.original_message : str = ""
         self.original_id : str = ""
@@ -19,10 +22,15 @@ class RecruitmentPost:
         self.open_slots : int = 0
         self.url : str = ""
 
+    def clean_up(self):
+        self.roles = role_list_to_job_list(self.roles)
+        self.intent = intent_to_abbr(self.intent)
+
     def to_dict(self) -> dict:
         return {
             "uid" : self.uid,
             "date" : self.date.isoformat() if self.date else None,
+            "fetcher" : self.fetcher,
             "source" : self.source,
             "original_message" : self.original_message,
             "original_id" : self.original_id,
@@ -40,6 +48,7 @@ class RecruitmentPost:
         post = RecruitmentPost()
         post.uid = values.get("uid", "")
         post.date = datetime.fromisoformat(values.get("date", ""))
+        post.fetcher = values.get("fetcher", "")
         post.source = values.get("source", "")
         post.original_message = values.get("original_message", "")
         post.original_id = values.get("original_id", "")
@@ -54,7 +63,7 @@ class RecruitmentPost:
         return post
 
     def storage_key(self) -> str:
-        return "%s-%s" % (self.source, self.uid)
+        return "%s-%s" % (self.fetcher, self.uid)
 
     def inject_into_prompt(self, prompt : str) -> str:
         for k, v in self.to_dict().items():
