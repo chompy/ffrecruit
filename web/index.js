@@ -1,6 +1,6 @@
 const JOBS = ["PLD", "WAR", "DRK", "GNB", "SCH", "SGE", "WHM", "AST", "BLM", "SMN", "RDM", "BLU", "PIC", "BRD", "MCH", "DNC", "DRG", "MNK", "SAM", "NIN", "RPR", "VPR"];
 const INTENTS = ["LFG", "LFM", "FC", "OTHER"];
-const TAGS = ["C","MC","SHC","HC","WP","W1","Blind","Speed","Farm","Parse","Savage","Ultimate","Extreme","NA","JP","EU","OC","7.0"];
+const TAGS = ["Casual","MC","SHC","HC","WP","W1","Blind","Speed","Farm","Parse","Savage","Ultimate","Extreme","NA","JP","EU","OC","7.0"];
 const SELECTOR = "#results"
 let _data = {};
 
@@ -76,7 +76,7 @@ function display_post(post_data) {
 
     let sourceEle = document.createElement("div");
     sourceEle.className = "source";
-    sourceEle.innerText = post_data.source;
+    sourceEle.innerHTML = "<img src='img/" + post_data.fetcher + ".png' alt='"+post_data.fetcher+"' /> " + post_data.source;
     rootEle.append(sourceEle);
 
     rootEle.append(_create_text_info_element("INTENTS:", post_data.tags.join(",")));

@@ -3,31 +3,38 @@
     "properties": {
         "intent": {
             "type": "string",
-            "enum": ["Looking For Group", "Looking For Members", "Free Company", "Other"]
+            "enum": ["Looking For Group", "Looking For Members", "Free Company", "Other"],
+            "description": "The specific intent of the recruitment post."
         },
         "schedule": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "description": "A summary of the schedule of the player and/or their group."
         },
         "summary": {
-            "type": "string"
+            "type": "string",
+            "description": "A short one to three sentence summary of the original recruitment post."
         },
         "tags": {
             "type": "array",
             "items": {
                 "type": "string",
-                "enum": ["Static","LFG","LFM","FC","C","MC","SHC","HC","WP","W1","Blind","Speed","Farm","Parse","Savage","Ultimate","Extreme","NA","JP","EU","OC","7.0"]
-            }
+                "enum": ["Static","LFG","LFM","FC","Casual","MC","SHC","HC","WP","W1","Blind","Speed","Farm","Parse","Savage","Ultimate","Extreme","NA","JP","EU","OC","7.0"]
+            },
+            "description": "A list of tags denoting the goals/purpose of the recruitment post."
         },
         "roles": {
             "type": "array",
             "items": {
                 "type": "string",
                 "enum": ["Healer", "Regen Healer", "Pure Healer", "Shield Healer", "Tank", "DPS", "Melee", "Physical Ranged", "Phys Ranged", "Ranged", "Magical Ranged", "Caster", "PLD","WAR","DRK","GNB","WHM","SCH","AST","SGE","MNK","DRG","NIN","SAM","RPR","VIP","BRD","MCH","DNC","BLM","SMN","RDM","PIC","BLU"]
-            }
+            },
+            "description": "List of roles (or jobs) that either the group needs or the player has available."
         },
         "contact": {
-            "type": "string"
+            "type": "string",
+            "description": "Details of how to contact the author of the recruitment post."
         }
     },
-    "required": ["intent", "summary", "tags"]
+    "required": ["intent", "summary", "tags", "schedule"]
 }

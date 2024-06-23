@@ -80,10 +80,16 @@ for file in os.scandir(INPUT_PATH):
     end_time = datetime.datetime.now()
     duration = end_time - start_time
 
+    
+
+    try:
+        post_data = json.loads(res.get("choices", [{}])[0].get("message", {}).get("function_call", {}).get("arguments", {}))
+    except json.decoder.JSONDecodeError:
+        print("\tERROR: json decode, %d seconds" % (duration.seconds))
+        continue
+    
     print("\tDONE: %d seconds" % (duration.seconds))
 
-    post_data = json.loads(res.get("choices", [{}])[0].get("message", {}).get("function_call", {}).get("arguments", {}))
-    
     post.intent = post_data.get("intent", "")
     post.schedule = post_data.get("schedule", "")
     post.summary = post_data.get("summary", "")
